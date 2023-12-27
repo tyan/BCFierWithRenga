@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using Bcfier.Bcf.Bcf2;
-using Bcfier.Revit.Entry;
+using Bcfier.RengaPlugin.Entry;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Component = Bcfier.Bcf.Bcf2.Component;
@@ -21,6 +21,7 @@ namespace Bcfier.RengaPlugin
   {
     //private ExternalEvent ExtEvent;
     private ExtEvntOpenView Handler;
+            
     //private UIApplication uiapp;
 
     public RengaWindow(/*UIApplication _uiapp, ExternalEvent exEvent, */ExtEvntOpenView handler)
