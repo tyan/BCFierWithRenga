@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Component = Bcfier.Bcf.Bcf2.Component;
 using Point = Bcfier.Bcf.Bcf2.Point;
 using Bcfier.Data.Utils;
+using Bcfier.RengaPlugin.Data;
 
 namespace Bcfier.RengaPlugin
 {
@@ -21,10 +22,9 @@ namespace Bcfier.RengaPlugin
   {
     //private ExternalEvent ExtEvent;
     private ExtEvntOpenView Handler;
-            
-    //private UIApplication uiapp;
+    private Renga.IApplication _app;
 
-    public RengaWindow(/*UIApplication _uiapp, ExternalEvent exEvent, */ExtEvntOpenView handler)
+    public RengaWindow(Renga.IApplication app, ExtEvntOpenView handler)
     {
       InitializeComponent();
 
@@ -32,11 +32,11 @@ namespace Bcfier.RengaPlugin
       {
         //ExtEvent = exEvent;
         Handler = handler;
-        //uiapp = _uiapp;
+        _app = app;
       }
       catch (Exception ex1)
       {
-        //TaskDialog.Show("Error!", "exception: " + ex1);
+        app.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex1.Message);
       }
     }
 
@@ -96,36 +96,29 @@ namespace Bcfier.RengaPlugin
       {
         if (Bcfier.SelectedBcf() == null)
           return;
-        //var issue = e.Parameter as Markup;
-        //if (issue == null)
-        //{
-        //  MessageBox.Show("No Issue selected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        //  return;
-        //}
+        
+        var issue = e.Parameter as Markup;
+        if (issue == null)
+        {
+          MessageBox.Show("No Issue selected", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+          return;
+        }
 
-        //var dialog = new AddViewRenga(issue, Bcfier.SelectedBcf().TempPath, uiapp.ActiveUIDocument.Document);
-        //dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        //dialog.ShowDialog();
-        //if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
-        //{
-        //  //generate and set the VisInfo
-        //  issue.Viewpoints.Last().VisInfo = RevitView.GenerateViewpoint(uiapp.ActiveUIDocument);
-
-        //  //get filename
-        //  UIDocument uidoc = uiapp.ActiveUIDocument;
-
-        //  if (uidoc.Document.Title != null)
-        //    issue.Header[0].Filename = uidoc.Document.Title;
-        //  else
-        //    issue.Header[0].Filename = "Unknown";
-
-        //  Bcfier.SelectedBcf().HasBeenSaved = false;
-        //}
+        var dialog = new AddViewRenga(issue, Bcfier.SelectedBcf().TempPath, _app);
+        dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        dialog.ShowDialog();
+        
+        if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
+        {
+          //generate and set the visinfo
+          issue.Viewpoints.Last().VisInfo = RengaView.GenerateViewpoint(_app);
+          Bcfier.SelectedBcf().HasBeenSaved = false;
+        }
 
       }
       catch (System.Exception ex1)
       {
-        //TaskDialog.Show("Error adding a View!", "exception: " + ex1);
+        _app.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex1.Message);
       }
     }
     #endregion

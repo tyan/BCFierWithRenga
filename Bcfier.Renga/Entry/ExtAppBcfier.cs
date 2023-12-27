@@ -35,7 +35,7 @@ namespace Bcfier.RengaPlugin.Entry
     #endregion
 
     #region public methods
-    public void ShowForm(/*UIApplication uiapp*/)
+    public void ShowForm(Renga.IApplication app)
     {
       try
       {
@@ -50,7 +50,7 @@ namespace Bcfier.RengaPlugin.Entry
 
         // We give the objects to the new dialog;  
         // The dialog becomes the owner responsible for disposing them, eventually.
-        Window = new RengaWindow(handler);
+        Window = new RengaWindow(app, handler);
         Window.Show();
       }
       catch (Exception ex)
