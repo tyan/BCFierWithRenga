@@ -5,13 +5,24 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Renga;
+
 namespace Bcfier.Renga.Entry
 {
-  public class AppMain //: IExternalApplication
+  public class AppMain : IPlugin
   {
     private string _path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
     #region Renga IPlugin Implementation
+    public bool Initialize(string pluginFolder)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void Stop()
+    {
+      throw new NotImplementedException();
+    }
 
     //public Result OnStartup(UIControlledApplication application)
     //{

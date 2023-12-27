@@ -51,6 +51,11 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <COMFileReference Include="..\..\RengaSDK\tlb\RengaCOMAPI.tlb">
+    </COMFileReference>
+    <Reference Include="Renga.NET.PluginUtility">
+      <HintPath>..\..\RengaSDK\Net\Renga.NET.PluginUtility.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyVersionInfo.cs">
