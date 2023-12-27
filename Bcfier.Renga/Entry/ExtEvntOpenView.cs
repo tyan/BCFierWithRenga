@@ -7,7 +7,7 @@ using System.Windows;
 using Bcfier.Bcf.Bcf2;
 using Bcfier.Data.Utils;
 
-namespace Bcfier.Revit.Entry
+namespace Bcfier.RengaPlugin.Entry
 {
   public class ExtEvntOpenView //: IExternalEventHandler
   {
