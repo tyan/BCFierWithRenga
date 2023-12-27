@@ -9,6 +9,8 @@ namespace Bcfier.RengaPlugin.Entry
     private static bool _isRunning;
     private static ExtAppBcfier _extAppBcfier;
 
+    public void Execute() 
+    { }
     //public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
     //{
     //  try
