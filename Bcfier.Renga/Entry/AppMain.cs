@@ -24,7 +24,7 @@ namespace Bcfier.RengaPlugin.Entry
       actionEvents.Triggered += (s, e) =>
       {
         var mainCommand = new CmdMain();
-        mainCommand.Execute();
+        mainCommand.Execute(app);
       };
 
       var panelExtension = ui.CreateUIPanelExtension();

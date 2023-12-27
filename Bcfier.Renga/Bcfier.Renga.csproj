@@ -76,6 +76,7 @@
     <Compile Include="Entry\CmdMain.cs" />
     <Compile Include="Entry\ExtEvntOpenView.cs" />
     <Compile Include="Entry\AppMain.cs" />
+    <Compile Include="Data\RengaView.cs" />
     <Compile Include="RengaWindow.xaml.cs">
       <DependentUpon>RengaWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -125,9 +126,7 @@
   <ItemGroup>
     <Resource Include="Assets\icon.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="Assets\BCFierIcon16x16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
