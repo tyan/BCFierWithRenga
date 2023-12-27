@@ -16,13 +16,11 @@ namespace Bcfier.Renga.Entry
     #region Renga IPlugin Implementation
     public bool Initialize(string pluginFolder)
     {
-      throw new NotImplementedException();
+      return true;
     }
 
     public void Stop()
-    {
-      throw new NotImplementedException();
-    }
+    {}
 
     //public Result OnStartup(UIControlledApplication application)
     //{
