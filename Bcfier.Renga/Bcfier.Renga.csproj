@@ -7,7 +7,7 @@
     <ProjectGuid>{CAACABC7-4EE0-4390-848F-AB2153A4FD6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bcfier.Renga</RootNamespace>
+    <RootNamespace>Bcfier.RengaPlugin</RootNamespace>
     <AssemblyName>Bcfier.Renga</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

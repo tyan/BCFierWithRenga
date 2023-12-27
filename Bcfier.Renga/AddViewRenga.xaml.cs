@@ -2,7 +2,7 @@
 using System.Windows;
 using Bcfier.Bcf.Bcf2;
 
-namespace Bcfier.Renga
+namespace Bcfier.RengaPlugin
 {
   /// <summary>
   /// Interaction logic for AddViewRenga.xaml
