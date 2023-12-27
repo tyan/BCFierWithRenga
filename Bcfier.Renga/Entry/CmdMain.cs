@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Bcfier.Renga.Entry
+namespace Bcfier.RengaPlugin.Entry
 {
   public class CmdMain //: IExternalCommand
   {

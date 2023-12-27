@@ -7,7 +7,8 @@ using System.Windows.Media.Imaging;
 
 using Renga;
 
-namespace Bcfier.Renga.Entry
+
+namespace Bcfier.RengaPlugin.Entry
 {
   public class AppMain : IPlugin
   {

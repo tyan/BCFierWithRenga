@@ -2,7 +2,7 @@
 using System;
 using System.Windows;
 
-namespace Bcfier.Renga.Entry
+namespace Bcfier.RengaPlugin.Entry
 {
   public class ExtAppBcfier //: IExternalApplication
   {
