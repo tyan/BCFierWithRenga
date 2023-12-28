@@ -20,9 +20,8 @@ namespace Bcfier.RengaPlugin
   /// </summary>
   public partial class RengaWindow : Window
   {
-    //private ExternalEvent ExtEvent;
-    private ExtEvntOpenView Handler;
-    private Renga.IApplication _app;
+    private ExtEvntOpenView _Handler;
+    private Renga.IApplication _App;
 
     public RengaWindow(Renga.IApplication app, ExtEvntOpenView handler)
     {
@@ -30,9 +29,8 @@ namespace Bcfier.RengaPlugin
 
       try
       {
-        //ExtEvent = exEvent;
-        Handler = handler;
-        _app = app;
+        _Handler = handler;
+        _App = app;
       }
       catch (Exception ex1)
       {
@@ -54,35 +52,17 @@ namespace Bcfier.RengaPlugin
       {
         if (Bcfier.SelectedBcf() == null)
           return;
-        //var view = e.Parameter as ViewPoint;
-        //if (view == null)
-        //  return;
-        //UIDocument uidoc = uiapp.ActiveUIDocument;
-
-        //if (uidoc.ActiveView.ViewType == ViewType.Schedule)
-        //{
-        //  MessageBox.Show("BCFier can't take snapshots of schedules.",
-        //      "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //  return;
-        //}
-
-        //if (uidoc.ActiveView.ViewType == ViewType.ThreeD)
-        //{
-        //  var view3D = (View3D)uidoc.ActiveView;
-        //  if (view3D.IsPerspective)
-        //  {
-        //    MessageBox.Show("This operation is not allowed in a Perspective View.\nPlease close the current window(s) and retry.",
-        //        "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-        //    return;
-        //  }
-
-        //}
-        //Handler.v = view.VisInfo;
-        //ExtEvent.Raise();
+        
+        var view = e.Parameter as ViewPoint;
+        if (view == null)
+          return;
+        
+        _Handler.v = view.VisInfo;
+        _Handler.Execute(_App);
       }
       catch (System.Exception ex1)
       {
-        //TaskDialog.Show("Error opening a View!", "exception: " + ex1);
+        _App.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex1.Message);
       }
     }
     /// <summary>
@@ -104,21 +84,21 @@ namespace Bcfier.RengaPlugin
           return;
         }
 
-        var dialog = new AddViewRenga(issue, Bcfier.SelectedBcf().TempPath, _app);
+        var dialog = new AddViewRenga(issue, Bcfier.SelectedBcf().TempPath, _App);
         dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         dialog.ShowDialog();
         
         if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
         {
           //generate and set the visinfo
-          issue.Viewpoints.Last().VisInfo = RengaView.GenerateViewpoint(_app);
+          issue.Viewpoints.Last().VisInfo = RengaView.GenerateViewpoint(_App);
           Bcfier.SelectedBcf().HasBeenSaved = false;
         }
 
       }
       catch (System.Exception ex1)
       {
-        _app.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex1.Message);
+        _App.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex1.Message);
       }
     }
     #endregion

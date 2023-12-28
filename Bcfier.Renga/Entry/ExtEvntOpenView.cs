@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Windows;
 using Bcfier.Bcf.Bcf2;
-using Bcfier.Data.Utils;
 
 namespace Bcfier.RengaPlugin.Entry
 {
@@ -13,235 +9,46 @@ namespace Bcfier.RengaPlugin.Entry
   {
     public VisualizationInfo v;
 
-    //public void Execute(UIApplication app)
-    //{
-    //  try
-    //  {
-    //    UIDocument uidoc = app.ActiveUIDocument;
-    //    Document doc = uidoc.Document;
-    //    var uniqueView = UserSettings.GetBool("alwaysNewView");
+    public void Execute(Renga.IApplication app)
+    {
+      try
+      {
+        var modelView = app.ActiveView as Renga.IModelView;
+        if (modelView == null) 
+          return;
 
-    //    // IS ORTHOGONAL
-    //    if (v.OrthogonalCamera != null)
-    //    {
-    //      if (v.OrthogonalCamera.CameraViewPoint == null || v.OrthogonalCamera.CameraUpVector == null || v.OrthogonalCamera.CameraDirection == null)
-    //        return;
-    //      //type = "OrthogonalCamera";
-    //      var zoom = v.OrthogonalCamera.ViewToWorldScale.ToFeet();
-    //      var cameraDirection = RevitUtils.GetRevitXYZ(v.OrthogonalCamera.CameraDirection);
-    //      var cameraUpVector = RevitUtils.GetRevitXYZ(v.OrthogonalCamera.CameraUpVector);
-    //      var cameraViewPoint = RevitUtils.GetRevitXYZ(v.OrthogonalCamera.CameraViewPoint);
-    //      var orient3D = RevitUtils.ConvertBasePoint(doc, cameraViewPoint, cameraDirection, cameraUpVector, true);
+        var camera = (modelView as Renga.IView3DParams)?.Camera;
+        if (camera == null)
+          return;
 
-    //      View3D orthoView = null;
-    //      //if active view is 3d ortho use it
-    //      if (doc.ActiveView.ViewType == ViewType.ThreeD)
-    //      {
-    //        var activeView3D = doc.ActiveView as View3D;
-    //        if (!activeView3D.IsPerspective)
-    //          orthoView = activeView3D;
-    //      }
-    //      if (orthoView == null)
-    //      {
-    //        //try to use an existing 3D view
-    //        IEnumerable<View3D> viewcollector3D = get3DViews(doc);
-    //        if (viewcollector3D.Any(o => o.Name == "{3D}" || o.Name == "BCFortho"))
-    //          orthoView = viewcollector3D.First(o => o.Name == "{3D}" || o.Name == "BCFortho");
-    //      }
-    //      using (var trans = new Transaction(uidoc.Document))
-    //      {
-    //        if (trans.Start("Open orthogonal view") == TransactionStatus.Started)
-    //        {
-    //          //create a new 3d ortho view 
+        if (v.PerspectiveCamera == null)
+          return;
 
-    //          if (orthoView == null || uniqueView)
-    //          {
-    //            orthoView = View3D.CreateIsometric(doc, getFamilyViews(doc).First().Id);
-    //            orthoView.Name = (uniqueView) ? "BCFortho" + DateTime.Now.ToString("yyyyMMddTHHmmss") : "BCFortho";
-    //          }
-    //          else
-    //          {
-    //            //reusing an existing view, I net to reset the visibility
-    //            //placed this here because if set afterwards it doesn't work
-    //            orthoView.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
-    //          }
-    //          orthoView.SetOrientation(orient3D);
-    //          trans.Commit();
-    //        }
-    //      }
-    //      uidoc.ActiveView = orthoView;
-    //      //adjust view rectangle
+        var rengaCameraPos = new Renga.FloatPoint3D();
+        var bcfCameraPos = v.PerspectiveCamera.CameraViewPoint;
+        rengaCameraPos.X = (float)bcfCameraPos.X * 1000;
+        rengaCameraPos.Y = (float)bcfCameraPos.Y * 1000;
+        rengaCameraPos.Z = (float)bcfCameraPos.Z * 1000;
 
-    //      // **** CUSTOM VALUE FOR TEKLA **** //
-    //      // double x = zoom / 2.5;
-    //      // **** CUSTOM VALUE FOR TEKLA **** //
+        var rengaFocusPoint = new Renga.FloatPoint3D();
+        var bcfCameraDirection = v.PerspectiveCamera.CameraDirection;
+        rengaFocusPoint.X = rengaCameraPos.X + (float)bcfCameraDirection.X * 1000;
+        rengaFocusPoint.Y = rengaCameraPos.Y + (float)bcfCameraDirection.Y * 1000;
+        rengaFocusPoint.Z = rengaCameraPos.Z + (float)bcfCameraDirection.Z * 1000;
 
-    //      double x = zoom;
-    //      //if(MySettings.Get("optTekla")=="1")
-    //      //    x = zoom / 2.5;
+        var rengaUpVector = new Renga.FloatVector3D();
+        var bcfUpVector = v.PerspectiveCamera.CameraUpVector;
+        rengaUpVector.X = (float)bcfUpVector.X;
+        rengaUpVector.Y = (float)bcfUpVector.Y;
+        rengaUpVector.Z = (float)bcfUpVector.Z;
+        camera.LookAt(rengaFocusPoint, rengaCameraPos, rengaUpVector);
+      }
+      catch (Exception ex)
+      {
+        app.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex.Message);
+      }
+    }
 
-    //      //set UI view position and zoom
-    //      XYZ m_xyzTl = uidoc.ActiveView.Origin.Add(uidoc.ActiveView.UpDirection.Multiply(x)).Subtract(uidoc.ActiveView.RightDirection.Multiply(x));
-    //      XYZ m_xyzBr = uidoc.ActiveView.Origin.Subtract(uidoc.ActiveView.UpDirection.Multiply(x)).Add(uidoc.ActiveView.RightDirection.Multiply(x));
-    //      uidoc.GetOpenUIViews().First().ZoomAndCenterRectangle(m_xyzTl, m_xyzBr);
-    //    }
-    //    //perspective
-    //    else if (v.PerspectiveCamera != null)
-    //    {
-    //      if (v.PerspectiveCamera.CameraViewPoint == null || v.PerspectiveCamera.CameraUpVector == null || v.PerspectiveCamera.CameraDirection == null)
-    //        return;
-
-    //      //not used since the fov cannot be changed in Revit
-    //      var zoom = v.PerspectiveCamera.FieldOfView;
-    //      //FOV - not used
-    //      //double z1 = 18 / Math.Tan(zoom / 2 * Math.PI / 180);
-    //      //double z = 18 / Math.Tan(25 / 2 * Math.PI / 180);
-    //      //double factor = z1 - z;
-
-    //      var cameraDirection = RevitUtils.GetRevitXYZ(v.PerspectiveCamera.CameraDirection);
-    //      var cameraUpVector = RevitUtils.GetRevitXYZ(v.PerspectiveCamera.CameraUpVector);
-    //      var cameraViewPoint = RevitUtils.GetRevitXYZ(v.PerspectiveCamera.CameraViewPoint);
-    //      var orient3D = RevitUtils.ConvertBasePoint(doc, cameraViewPoint, cameraDirection, cameraUpVector, true);
-
-
-
-    //      View3D perspView = null;
-    //      //try to use an existing 3D view
-    //      IEnumerable<View3D> viewcollector3D = get3DViews(doc);
-    //      if (viewcollector3D.Any(o => o.Name == "BCFpersp"))
-    //        perspView = viewcollector3D.First(o => o.Name == "BCFpersp");
-
-    //      using (var trans = new Transaction(uidoc.Document))
-    //      {
-    //        if (trans.Start("Open perspective view") == TransactionStatus.Started)
-    //        {
-    //          if (null == perspView || uniqueView)
-    //          {
-    //            perspView = View3D.CreatePerspective(doc, getFamilyViews(doc).First().Id);
-    //            perspView.Name = (uniqueView) ? "BCFpersp" + DateTime.Now.ToString("yyyyMMddTHHmmss") : "BCFpersp";
-    //          }
-    //          else
-    //          {
-    //            //reusing an existing view, I net to reset the visibility
-    //            //placed this here because if set afterwards it doesn't work
-    //            perspView.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate);
-    //          }
-
-    //          perspView.SetOrientation(orient3D);
-
-    //          // turn off the far clip plane
-    //          if (perspView.get_Parameter(BuiltInParameter.VIEWER_BOUND_ACTIVE_FAR).HasValue)
-    //          {
-    //            Parameter m_farClip = perspView.get_Parameter(BuiltInParameter.VIEWER_BOUND_ACTIVE_FAR);
-    //            m_farClip.Set(0);
-    //          }
-    //          perspView.CropBoxActive = true;
-    //          perspView.CropBoxVisible = true;
-
-    //          trans.Commit();
-    //        }
-    //      }
-    //      uidoc.ActiveView = perspView;
-    //    }
-    //    //sheet
-    //    else if (v.SheetCamera != null)
-    //    {
-    //      IEnumerable<View> viewcollectorSheet = getSheets(doc, v.SheetCamera.SheetID, v.SheetCamera.SheetName);
-    //      if (!viewcollectorSheet.Any())
-    //      {
-            
-    //        MessageBox.Show("View " + v.SheetCamera.SheetName + " with Id=" + v.SheetCamera.SheetID + " not found.");
-    //        return;
-    //      }
-    //      uidoc.ActiveView = viewcollectorSheet.First();
-    //      uidoc.RefreshActiveView();
-
-    //      XYZ m_xyzTl = new XYZ(v.SheetCamera.TopLeft.X, v.SheetCamera.TopLeft.Y, v.SheetCamera.TopLeft.Z);
-    //      XYZ m_xyzBr = new XYZ(v.SheetCamera.BottomRight.X, v.SheetCamera.BottomRight.Y, v.SheetCamera.BottomRight.Z);
-    //      uidoc.GetOpenUIViews().First().ZoomAndCenterRectangle(m_xyzTl, m_xyzBr);
-
-    //    }
-    //    //no view included
-    //    else
-    //      return;
-
-    //    if (v.Components == null)
-    //      return;
-
-
-    //    var elementsToSelect = new List<ElementId>();
-    //    var elementsToHide = new List<ElementId>();
-    //    var elementsToShow = new List<ElementId>();
-
-    //    var visibleElems = new FilteredElementCollector(doc, doc.ActiveView.Id)
-    //    .WhereElementIsNotElementType()
-    //    .WhereElementIsViewIndependent()
-    //    .ToElementIds()
-    //    .Where(e => doc.GetElement(e).CanBeHidden(doc.ActiveView)); //might affect performance, but it's necessary
-
-
-    //    bool canSetVisibility = (v.Components.Visibility != null &&
-    //      v.Components.Visibility.DefaultVisibilitySpecified &&
-    //      v.Components.Visibility.Exceptions.Any())
-    //      ;
-    //    bool canSetSelection = (v.Components.Selection != null && v.Components.Selection.Any());
-
-       
-
-    //    //loop elements
-    //    foreach (var e in visibleElems)
-    //    {
-    //      var guid = IfcGuid.ToIfcGuid(ExportUtils.GetExportId(doc, e));
-
-    //      if (canSetVisibility)
-    //      {
-    //        if (v.Components.Visibility.DefaultVisibility)
-    //        {
-    //          if (v.Components.Visibility.Exceptions.Any(x => x.IfcGuid == guid))
-    //            elementsToHide.Add(e);
-    //        }
-    //        else
-    //        {
-    //          if (v.Components.Visibility.Exceptions.Any(x => x.IfcGuid == guid))
-    //            elementsToShow.Add(e);
-    //        }
-    //      }
-
-    //      if (canSetSelection)
-    //      {
-    //        if (v.Components.Selection.Any(x => x.IfcGuid == guid))
-    //          elementsToSelect.Add(e);
-    //      }
-    //    }
-
- 
-
-
-
-    //    using (var trans = new Transaction(uidoc.Document))
-    //    {
-    //      if (trans.Start("Apply BCF visibility and selection") == TransactionStatus.Started)
-    //      {
-    //        if (elementsToHide.Any())
-    //          doc.ActiveView.HideElementsTemporary(elementsToHide);
-    //        //there are no items to hide, therefore hide everything and just show the visible ones
-    //        else if (elementsToShow.Any())
-    //          doc.ActiveView.IsolateElementsTemporary(elementsToShow);
-
-    //        if (elementsToSelect.Any())
-    //          uidoc.Selection.SetElementIds(elementsToSelect);
-    //      }
-    //      trans.Commit();
-    //    }
-
-
-    //    uidoc.RefreshActiveView();
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    TaskDialog.Show("Error!", "exception: " + ex);
-    //  }
-    //}
     //private IEnumerable<ViewFamilyType> getFamilyViews(Document doc)
     //{
 
