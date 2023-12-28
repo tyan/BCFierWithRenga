@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Bcfier.Bcf.Bcf2;
+using Bcfier.Data.Utils;
 
 namespace Bcfier.RengaPlugin.Entry
 {
@@ -42,6 +44,36 @@ namespace Bcfier.RengaPlugin.Entry
         rengaUpVector.Y = (float)bcfUpVector.Y;
         rengaUpVector.Z = (float)bcfUpVector.Z;
         camera.LookAt(rengaFocusPoint, rengaCameraPos, rengaUpVector);
+
+        var buildingModel = app.Project?.Model;
+        if (buildingModel == null)
+          return;
+
+        var defaultVisibility = v.Components.Visibility.DefaultVisibility;
+        if (defaultVisibility == null)
+          defaultVisibility = true;
+
+        var objects = buildingModel.GetObjects();
+        var exceptionIds = new List<int>();
+        var otherIds = new List<int>();
+
+        Func<string, bool> isExceptionObject = (string ifcGuid) => 
+        {
+          return Array.Find(v.Components.Visibility.Exceptions, exception => exception.IfcGuid == ifcGuid) != null;
+        };
+
+        foreach (int id in objects.GetIds())
+        {
+          var rengaUuid = objects.GetById(id).UniqueId;
+          var ifcGuid = IfcGuid.ToIfcGuid(rengaUuid);
+          if (isExceptionObject(ifcGuid))
+            exceptionIds.Add(id);
+          else
+            otherIds.Add(id);
+        }
+
+        modelView.SetObjectsVisibility(otherIds.ToArray(), defaultVisibility);
+        modelView.SetObjectsVisibility(exceptionIds.ToArray(), !defaultVisibility);
       }
       catch (Exception ex)
       {

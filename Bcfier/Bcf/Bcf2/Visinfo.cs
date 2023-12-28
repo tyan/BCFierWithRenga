@@ -512,7 +512,7 @@ namespace Bcfier.Bcf.Bcf2
 
     private Component[] exceptionsField;
 
-    private bool defaultVisibilityField;
+    private bool defaultVisibilityField = true;
 
     private bool defaultVisibilityFieldSpecified;
 
