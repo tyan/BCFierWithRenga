@@ -139,10 +139,10 @@ namespace Bcfier.RengaPlugin
     //stats
     private void RengaWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-      Task.Run(() =>
-      {
-        StatHat.Post.EzCounter(@"hello@teocomi.com", "BCFierRevitStart", 1);
-      });
+      //Task.Run(() =>
+      //{
+      //  StatHat.Post.EzCounter(@"hello@teocomi.com", "BCFierRevitStart", 1);
+      //});
     }
 
   }
