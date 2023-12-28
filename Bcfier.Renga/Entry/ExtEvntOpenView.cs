@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Bcfier.Bcf.Bcf2;
+using Bcfier.Data.Utils;
 
 namespace Bcfier.RengaPlugin.Entry
 {
@@ -42,42 +44,49 @@ namespace Bcfier.RengaPlugin.Entry
         rengaUpVector.Y = (float)bcfUpVector.Y;
         rengaUpVector.Z = (float)bcfUpVector.Z;
         camera.LookAt(rengaFocusPoint, rengaCameraPos, rengaUpVector);
+
+        var buildingModel = app.Project?.Model;
+        if (buildingModel == null)
+          return;
+
+        var allObjects = buildingModel.GetObjects();
+        var allObjectIds = buildingModel.GetObjects().GetIds();
+        var exceptionIds = new List<int>();
+        var otherIds = new List<int>();
+        var defaultVisibility = false;
+
+        if (v.Components.Visibility == null)
+        {
+          otherIds = allObjectIds.OfType<int>().ToList();
+        }
+        else
+        {
+          if (v.Components.Visibility.DefaultVisibilitySpecified)
+            defaultVisibility = v.Components.Visibility.DefaultVisibility;
+
+          Func<string, bool> isExceptionObject = (string ifcGuid) =>
+          {
+            return Array.Find(v.Components.Visibility.Exceptions, exception => exception.IfcGuid == ifcGuid) != null;
+          };
+
+          foreach (int id in allObjectIds)
+          {
+            var rengaUuid = allObjects.GetById(id).UniqueId;
+            var ifcGuid = IfcGuid.ToIfcGuid(rengaUuid);
+            if (isExceptionObject(ifcGuid))
+              exceptionIds.Add(id);
+            else
+              otherIds.Add(id);
+          }
+        }
+
+        modelView.SetObjectsVisibility(otherIds.ToArray(), defaultVisibility);
+        modelView.SetObjectsVisibility(exceptionIds.ToArray(), !defaultVisibility);
       }
       catch (Exception ex)
       {
         app.UI.ShowMessageBox(Renga.MessageIcon.MessageIcon_Error, "Error!", ex.Message);
       }
     }
-
-    //private IEnumerable<ViewFamilyType> getFamilyViews(Document doc)
-    //{
-
-    //  return from elem in new FilteredElementCollector(doc).OfClass(typeof(ViewFamilyType))
-    //         let type = elem as ViewFamilyType
-    //         where type.ViewFamily == ViewFamily.ThreeDimensional
-    //         select type;
-    //}
-    //private IEnumerable<View3D> get3DViews(Document doc)
-    //{
-    //  return from elem in new FilteredElementCollector(doc).OfClass(typeof(View3D))
-    //         let view = elem as View3D
-    //         select view;
-    //}
-    //private IEnumerable<View> getSheets(Document doc, int id, string stname)
-    //{
-    //  ElementId eid = new ElementId(id);
-    //  return from elem in new FilteredElementCollector(doc).OfClass(typeof(View))
-    //         let view = elem as View
-    //         //Get the view with the given Id or given name
-    //         where view.Id == eid | view.Name == stname
-    //         select view;
-      
-    //}
-    public string GetName()
-    {
-      return "Open 3D View";
-    }
-    // returns XYZ and ZOOM/FOV value
   }
-
 }

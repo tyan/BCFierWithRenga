@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media.Media3D;
 using Bcfier.Bcf.Bcf2;
+using Bcfier.Data.Utils;
 
 namespace Bcfier.RengaPlugin.Data
 {
@@ -17,7 +18,15 @@ namespace Bcfier.RengaPlugin.Data
     {
       try
       {
-        var view3DParams = app.ActiveView as Renga.IView3DParams;
+        var buildingModel = app.Project?.Model;
+        if (buildingModel == null)
+          return null;
+
+        var modelView = app.ActiveView as Renga.IModelView;
+        if (modelView == null)
+          return null;
+
+        var view3DParams = modelView as Renga.IView3DParams;
         if (view3DParams == null)
           return null;
 
@@ -47,8 +56,30 @@ namespace Bcfier.RengaPlugin.Data
 
         bcfViewCamera.FieldOfView = rengaCamera.FovHorizontal * (180 / Math.PI);
 
+        var objects = buildingModel.GetObjects();
+        var hiddenComponents = new List<Component>();
+        foreach (int id in objects.GetIds())
+        {
+          if (modelView.IsObjectVisible(id))
+            continue;
+
+          var ifcGuid = IfcGuid.ToIfcGuid(objects.GetById(id).UniqueId);
+          var hiddenComponent = new Component();
+          hiddenComponent.IfcGuid = ifcGuid;
+          hiddenComponents.Add(hiddenComponent);
+        }
+
         var result = new VisualizationInfo();
         result.PerspectiveCamera = bcfViewCamera;
+        result.Components = new Components();
+        result.Components.Visibility = new ComponentVisibility();
+        // Here we believe that the default visibility should be "true"
+        // since this is widely the most common scenario.
+        // Although in some cases this may not be optimal.
+        // TODO: assess the number of visible and invisible objects
+        result.Components.Visibility.DefaultVisibilitySpecified = true;
+        result.Components.Visibility.DefaultVisibility = true;
+        result.Components.Visibility.Exceptions = hiddenComponents.ToArray();
         return result;
       }
       catch (System.Exception ex1)
