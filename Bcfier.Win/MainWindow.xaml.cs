@@ -78,10 +78,10 @@ namespace Bcfier.Win
 
     private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-      Task.Run(() =>
-      {
-        StatHat.Post.EzCounter(@"hello@teocomi.com", "BCFierWinStart", 1);
-      });
+      //Task.Run(() =>
+      //{
+      //  StatHat.Post.EzCounter(@"hello@teocomi.com", "BCFierWinStart", 1);
+      //});
     }
   }
 }
