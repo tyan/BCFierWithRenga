@@ -436,17 +436,8 @@ namespace Bcfier.Bcf
         //ref: http://stackoverflow.com/questions/27289115/system-io-compression-zipfile-net-4-5-output-zip-in-not-suitable-for-linux-mac
         ZipFile.CreateFromDirectory(bcffile.TempPath, filename, CompressionLevel.Optimal, false, new ZipEncoder());
 
-        //Open browser at location
-        Uri uri2 = new Uri(filename);
-        string reportname = Path.GetFileName(uri2.LocalPath);
-
-        if (File.Exists(filename))
-        {
-          string argument = @"/select, " + filename;
-          System.Diagnostics.Process.Start("explorer.exe", argument);
-        }
         bcffile.HasBeenSaved = true;
-        bcffile.Filename = reportname;
+        bcffile.Filename = Path.GetFileNameWithoutExtension(filename);
       }
       catch (System.Exception ex1)
       {
