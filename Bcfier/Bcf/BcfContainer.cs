@@ -59,7 +59,9 @@ namespace Bcfier.Bcf
 
     public void NewFile()
     {
-      BcfFiles.Add(new BcfFile());
+      var newBcf = new BcfFile();
+      BcfFiles.Add(newBcf);
+      Directory.CreateDirectory(newBcf.TempPath);
       SelectedReportIndex = BcfFiles.Count - 1;
     }
     public void SaveFile(BcfFile bcf)
