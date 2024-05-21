@@ -70,7 +70,7 @@
                   TextWrapping="Wrap" />
               </StackPanel>
               <themes:TextPlaceholder
-                x:Name="Stauses"
+                x:Name="Statuses"
                 Grid.Row="1"
                 Grid.Column="1"
                 Height="50"

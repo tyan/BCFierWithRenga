@@ -137,7 +137,7 @@ namespace Bcfier.Bcf
     {
       try
       {
-        Globals.SetStatuses(UserSettings.Get("Stauses"));
+        Globals.SetStatuses(UserSettings.Get("Statuses"));
         Globals.SetTypes(UserSettings.Get("Types"));
 
         foreach (var bcf in BcfFiles)
