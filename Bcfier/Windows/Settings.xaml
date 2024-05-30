@@ -187,15 +187,6 @@
               </CheckBox>
             </Grid>
           </GroupBox>
-          <!--updates-->
-          <CheckBox
-            HorizontalAlignment="Center"
-                Name="checkupdates"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="20"
-                Content="Check for updates on startup"
-                IsChecked="True" />
         </Grid>
       </TabItem>
     </TabControl>

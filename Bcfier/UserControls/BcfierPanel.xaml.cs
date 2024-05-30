@@ -4,9 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -58,11 +55,6 @@ namespace Bcfier.UserControls
       LabelVersion.Content = "BCFier " +
                          System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-
-
-      if (UserSettings.GetBool("checkupdates"))
-        CheckUpdates();
-
     }
 
 
@@ -92,9 +84,6 @@ namespace Bcfier.UserControls
       }
       return true;
     }
-
-
-
 
     #region commands
     private void OnDeleteIssues(object sender, ExecutedRoutedEventArgs e)
@@ -394,49 +383,6 @@ namespace Bcfier.UserControls
 
     #endregion
 
-    #region web
-    //check github API for new release
-    private void CheckUpdates()
-    {
-      Task.Run(() =>
-      {
-        try
-        {
-          var release = GitHubRest.GetLatestRelease();
-          if (release == null)
-            return;
-
-          string version = release.tag_name.Replace("v", "");
-          var mine = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-          var online = Version.Parse(version);
-
-          if (mine.CompareTo(online) < 0 && release.assets.Any())
-          {
-            Application.Current.Dispatcher.Invoke((Action)delegate {
-
-              var dialog = new NewVersion();
-              dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-              dialog.Description.Text = release.name + " has been released on " + release.published_at.ToLongDateString() + "\ndo you want to check it out now?";
-              //dialog.NewFeatures.Text = document.Element("Bcfier").Element("Changelog").Element("NewFeatures").Value;
-              //dialog.BugFixes.Text = document.Element("Bcfier").Element("Changelog").Element("BugFixes").Value;
-              //dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-              dialog.ShowDialog();
-              if (dialog.DialogResult.HasValue && dialog.DialogResult.Value)
-                Process.Start(release.assets.First().browser_download_url);
-
-            });
-          
-          }
-        }
-        catch (System.Exception ex1)
-        {
-          //warning suppressed
-          Console.WriteLine("exception: " + ex1);
-        }
-      });
-    }
-
-    #endregion
     #region drag&drop
     private void Window_DragEnter(object sender, DragEventArgs e)
     {
