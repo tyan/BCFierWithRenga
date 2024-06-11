@@ -4,35 +4,13 @@ using System.Windows;
 
 namespace Bcfier.RengaPlugin.Entry
 {
-  public class ExtAppBcfier //: IExternalApplication
+  public class ExtAppBcfier
   {
 
     // class instance  
     public static ExtAppBcfier This = null;
     // ModelessForm instance  
     public RengaWindow Window;
-    
-    #region Renga IPlugin Implementation
-
-    //public Result OnStartup(UIControlledApplication application)
-    //{
-    //  RvtWindow = null;   // no dialog needed yet; the command will bring it  
-    //  This = this;  // static access to this application instance  
-
-    //  return Result.Succeeded;
-    //}
-
-    //public Result OnShutdown(UIControlledApplication application)
-    //{
-    //  if (RvtWindow != null && RvtWindow.IsVisible)
-    //  {
-    //    RvtWindow.Close();
-    //  }
-
-    //  return Result.Succeeded;
-    //}
-
-    #endregion
 
     #region public methods
     public void ShowForm(Renga.IApplication app)
