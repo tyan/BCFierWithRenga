@@ -6,9 +6,6 @@ namespace Bcfier.RengaPlugin.Entry
 {
   public class ExtAppBcfier
   {
-
-    // class instance  
-    public static ExtAppBcfier This = null;
     // ModelessForm instance  
     public RengaWindow Window;
 

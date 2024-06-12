@@ -5,7 +5,6 @@ namespace Bcfier.RengaPlugin.Entry
 {
   public class CmdMain
   {
-    internal static CmdMain ThisCmd = null;
     private static bool _isRunning;
     private static ExtAppBcfier _extAppBcfier;
 
@@ -18,7 +17,6 @@ namespace Bcfier.RengaPlugin.Entry
       }
 
       _isRunning = true;
-      ThisCmd = this;
       _extAppBcfier = new ExtAppBcfier();
       _extAppBcfier.ShowForm(app);
     }
