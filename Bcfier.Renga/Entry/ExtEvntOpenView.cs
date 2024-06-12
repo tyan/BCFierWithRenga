@@ -7,7 +7,7 @@ using Bcfier.Data.Utils;
 
 namespace Bcfier.RengaPlugin.Entry
 {
-  public class ExtEvntOpenView //: IExternalEventHandler
+  public class ExtEvntOpenView
   {
     public VisualizationInfo v;
 

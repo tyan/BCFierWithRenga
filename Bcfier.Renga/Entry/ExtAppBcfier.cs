@@ -20,9 +20,6 @@ namespace Bcfier.RengaPlugin.Entry
         // A new handler to handle request posting by the dialog  
         var handler = new ExtEvntOpenView();
 
-        // External Event for the dialog to use (to post requests)  
-        //var extEvent = ExternalEvent.Create(handler);
-
         // We give the objects to the new dialog;  
         // The dialog becomes the owner responsible for disposing them, eventually.
         Window = new RengaWindow(app, handler);
