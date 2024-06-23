@@ -70,7 +70,7 @@ namespace Bcfier.UserControls
           if (answer == MessageBoxResult.Yes)
           {
             _bcf.SaveFile(bcf);
-            return false;
+            return true;
           }
           if (answer == MessageBoxResult.Cancel)
           {
